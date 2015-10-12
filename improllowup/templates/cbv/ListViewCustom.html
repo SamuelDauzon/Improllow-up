@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}
+	Liste des {{ model_name }}
+{% endblock title %}
+{% block content %}
+	<div class="container" name="contenu_blanc">
+		<form method="get" action="">
+		{% csrf_token %} 
+			<table>
+				<tr>
+					<td>
+						Trier par
+					</td>
+					<td>
+						<select name="cbv_order_by_listview">
+							{% for field in model_fields %}
+								<option value="{{ field }}">{{ field }} (croissant)</option>
+								<option value="-{{ field }}">{{ field }} (décroissant)</option>
+							{% endfor %}
+						</select>
+					</td>
+					<td>
+						<input type="submit" value="Valider" />
+					</td>
+				</tr>
+			</table>
+		</form>
+
+		<table class="table table-striped">
+			<tr>
+				<th></th>
+				<th colspan="2">
+					<a href="{% url url_create_name %}" class="btn btn-default btn-success btn-sm"><span class="glyphicon glyphicon-plus"></span> Ajouter</a>
+				</th>
+			</tr>
+			{% for item in object_list %}
+			<tr>
+				<td>
+					{% if not url_create_name %}
+						<h3>{{ item }}</h3>
+					{% else %}
+						<a href="{% url url_detail_name item.id %}"><h3>{{ item }}</h3></a>
+					{% endif %}
+					
+				</td>
+				<td>
+					<a href="{% url url_update_name item.id %}" class="btn btn-default btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+				</td>
+				<td>
+					<a href="{% url url_delete_name item.id %}" class="btn btn-default btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		{% if is_paginated %}
+			<div class="pagination">
+				<span>
+					{% if page_obj.has_previous %}
+						<a href="{% url url_list_name %}?page={{ page_obj.previous_page_number }}">Page précédente</a>
+					{% endif %}
+					<span style="margin-left:15px;margin-right:15px;">
+						Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+					</span>
+					{% if page_obj.has_next %}
+						<a href="{% url url_list_name %}?page={{ page_obj.next_page_number }}">Page suivante</a>
+					{% endif %}
+				</span>
+			</div>
+		{% endif %}
+	</div>
+{% endblock content %}

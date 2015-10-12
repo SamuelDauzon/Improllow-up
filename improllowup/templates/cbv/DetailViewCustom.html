@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}
+	Détail d'un {{ model_name }} <!-- line 1 -->
+{% endblock title %}
+{% block content %}
+	<form method="post" action="{% url url_name object.id %}"> <!-- line 2 -->
+		{% csrf_token %} 
+		<table>
+			{{ form.as_table }} 
+		</table>
+		<p><input type="submit" value="Update" /></p>
+	</form>
+{% endblock content %}

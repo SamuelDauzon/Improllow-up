@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+    {% if not request.user.is_authenticated %}
+        <form method="post" action="">
+		{% csrf_token %}
+            <table>
+                {% bootstrap_form form %}
+            </table>
+            <br />
+            <input type="submit" class="button" value="Connexion" />
+        </form>
+    {% endif %}
+{% endblock %}

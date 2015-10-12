@@ -1,0 +1,29 @@
+# Improllowup
+
+## Le fichier improllowup/settings/local.py
+
+Ce fichier fait partie de la configuration nécessaire. Le contenu minimal de ce fichier est le suivant :
+’’’ 
+from .base import *
+
+SECRET_KEY = 'secret_key' 
+’’’
+
+## Générer la bibliothèque Javascript
+
+’’’
+cd improllowup/static/lib/js/jquery
+sudo npm run build
+’’’
+
+## Démarrer le serveur de développement
+
+Pour utiliser le serveur de développement, il faut utiliser la commande suivante : 
+
+’’’
+python3 manage.py runserver --settings=improllowup.settings.local
+’’’
+
+
+
+

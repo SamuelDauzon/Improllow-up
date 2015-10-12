@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Client : {{ task }}</h1>
+    {% if task.execution_date %}
+        <p class="bg-success">Tâche terminée le {{ task.execution_date }}</p>
+    {% endif %}
+    <table class="table">
+        <tr>
+            <td>Ajoutée par </td>
+            <td>{{ task.user_add }}</td>
+        </tr>
+        <tr>
+            <td>Assignée à </td>
+            <td>{{ task.userprofile }}</td>
+        </tr>
+        <tr>
+            <td>Appartient au projet</td>
+            <td>{{ task.project }}</td>
+        </tr>
+    </table>
+    <p>
+        {{ task.details }}
+    </p>   
+{% endblock %}

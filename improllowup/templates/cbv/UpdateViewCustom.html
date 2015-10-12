@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block title %}
+	Modifier un {{ model_name }}
+{% endblock title %}
+{% block content %}
+	<div class="container" name="contenu_blanc">
+		<form method="post" action="{% url url_name object.id %}" enctype="multipart/form-data">
+			{% csrf_token %} 
+			<table>
+				{% bootstrap_form form %}
+			</table>
+			<p><input type="submit" value="Modifier" /></p>
+		</form>
+	</div>
+{% endblock content %}

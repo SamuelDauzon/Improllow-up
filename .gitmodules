@@ -1,0 +1,6 @@
+[submodule "improllowup/static/lib/css/bootswatch"]
+	path = improllowup/static/lib/css/bootswatch
+	url = https://github.com/thomaspark/bootswatch/
+[submodule "improllowup/static/lib/js/jquery"]
+	path = improllowup/static/lib/js/jquery
+	url = https://github.com/jquery/jquery
