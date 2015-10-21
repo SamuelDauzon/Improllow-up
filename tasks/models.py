@@ -9,7 +9,7 @@ class Task(BaseModel):
         max_length = 128,
         verbose_name = "Nom de la tâche"
     )
-    duration = models.IntegerField(
+    duration = models.PositiveIntegerField(
         verbose_name = "Durée", 
         null = True,
         blank = True

@@ -13,7 +13,9 @@ class UserProfile(AbstractUser, BaseModel):
         related_name = "user_boss"
     )
     hiring_date = models.DateTimeField(
-        verbose_name = "Date d'arrivée"
+        verbose_name = "Date d'arrivée",
+        null = True, 
+        blank = True
     )
 
     def __str__(self):
