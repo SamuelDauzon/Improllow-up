@@ -4,3 +4,12 @@
 [submodule "improllowup/static/lib/js/jquery"]
 	path = improllowup/static/lib/js/jquery
 	url = https://github.com/jquery/jquery
+[submodule "improllowup/static/lib/js/angularjs"]
+	path = improllowup/static/lib/js/angularjs
+	url = https://github.com/angular/angular.js
+[submodule "improllowup/static/lib/js/angular-chart.js"]
+	path = improllowup/static/lib/js/angular-chart.js
+	url = https://github.com/jtblin/angular-chart.js
+[submodule "improllowup/static/lib/js/Chart.js"]
+	path = improllowup/static/lib/js/Chart.js
+	url = https://github.com/nnnick/Chart.js

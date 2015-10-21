@@ -7,7 +7,7 @@ from customers.cbv_base.DetailView import DetailViewCustom
 from .cbv import UserCreate
 from .models import UserProfile
 from .forms import UserForm, UserFormNoPassw
-from .views import detail
+from .views import detail, repartition_project
 
 urlpatterns = [
     url(r'^(list)?$', 
@@ -52,6 +52,7 @@ urlpatterns = [
         ), 
         name='delete'
     ),
-    url(r'^detail-(?P<pk>\d+)$', detail, name='detail'
-    ),
+    url(r'^detail-(?P<pk>\d+)$', detail, name='detail'),
+    url(r'^repartition_project-(?P<pk>\d+)$', repartition_project, name='repartition_project'),
+    url(r'^repartition_project-(?P<pk>\d+)_(?P<start>(\d+-\d+-\d+)?)_(?P<end>(\d+-\d+-\d+)?)$', repartition_project, name='repartition_project'),
 ]
