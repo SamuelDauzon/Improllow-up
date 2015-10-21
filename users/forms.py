@@ -1,4 +1,6 @@
 # coding:utf-8
+import datetime
+
 from django.contrib.auth import authenticate
 from django import forms
 from bootstrap3_datetime.widgets import DateTimePicker
@@ -44,4 +46,30 @@ class UserForm(UserFormNoPassw):
         model = UserFormNoPassw.Meta.model
         fields = UserFormNoPassw.Meta.fields + ('password',)
         widgets = UserFormNoPassw.Meta.widgets
+
+class TimeRangeForm(FormBase):
+    """
+    Formulaire de choix d'une période
+    """
+    start = forms.DateField(
+        initial = datetime.date.today, 
+        label = "Début", 
+        )
+    end_date = datetime.datetime.now() - datetime.timedelta(days=7)
+    end = forms.DateField(
+        initial = end_date, 
+        label = "Fin",
+        )
+    def __init__(self, *args, **kwargs):
+        super(TimeRangeForm, self).__init__(*args, **kwargs)
+        end_date = datetime.datetime.now() - datetime.timedelta(days=7)
+        start_date = datetime.datetime.now().strftime('%Y-%m-%d')
+
+        self.fields['start'].widget.attrs.update(
+            {'ng-model' : 'start', 'placeholder' : 'AAAA-MM-DD'}
+            )
+        self.fields['end'].widget.attrs.update(
+            {'ng-model' : 'end', 'placeholder' : 'AAAA-MM-DD'}
+            )
+
 
