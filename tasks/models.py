@@ -10,19 +10,20 @@ class Task(BaseModel):
         verbose_name = "Nom de la tâche"
     )
     duration = models.PositiveIntegerField(
-        verbose_name = "Durée", 
+        verbose_name = "Durée",
         null = True,
         blank = True
     )
     project = models.ForeignKey(Project, verbose_name="Projet")
+    project = models.ForeignKey("TaskType", verbose_name="Type de tâche")
     user_add = models.ForeignKey(
-        UserProfile, 
+        UserProfile,
         verbose_name="Ajoutée par",
         related_name="user_add",
         null = True
     )
     userprofile = models.ForeignKey(
-        UserProfile, 
+        UserProfile,
         verbose_name="Effectuée par",
         related_name="userprofile",
         null = True,
@@ -38,5 +39,13 @@ class Task(BaseModel):
         null = True
     )
 
+    def __str__(self):
+        return self.name
+
+class TaskType(BaseModel):
+    name = models.CharField(
+        max_length = 128,
+        verbose_name = "Nom du type de tâche"
+    )
     def __str__(self):
         return self.name
