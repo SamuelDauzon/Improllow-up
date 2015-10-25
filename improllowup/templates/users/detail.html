@@ -1,6 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>{{ userprofile }}</h1>
+    <div ng-app="charts">
+        <div ng-controller="Commands">
+            <div class="row">
+                <div class="col-lg-3 col-sm-3">
+                    <table id="date_filter">
+                        {{ form.as_table }}
+                    </table>
+                </div>
+                <div class="col-lg-3 col-sm-3">
+                    <button ng-click="test()">Recharger</button>
+                </div>
+            </div>
+
+            <div class="row" ng-controller="PieCtrl">
+                <div class="col-lg-6 col-sm-12" id="pie-chart" ng-if="show">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Pie Chart</div>
+                    <div class="panel-body">
+                      <canvas id="pie" class="chart chart-pie chart-xs" chart-data="data" chart-labels="labels"></canvas>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <h2>Les dernières tâches effectuées</h2>
     <table class="table table-striped table-condensed">
         <thead>
@@ -54,4 +79,92 @@
             {% endif %}
         </span>
     </div>
+
+
+    <script type="text/javascript">
+
+    (function() {
+
+        angular.module("charts", ["chart.js"])
+            .config(['ChartJsProvider', function (ChartJsProvider) {
+                ChartJsProvider.setOptions({
+                    colours: ['#FF5252', '#FF8A80'],
+                    responsive: false
+                });
+                ChartJsProvider.setOptions('Line', {
+                    datasetFill: false
+                });
+            }])
+
+            .controller("Commands", function ($scope, $http) {
+                $scope.test = function () {
+                    $scope.$broadcast(
+                        "updateFilters",
+                        {'start' : $scope.start, 'end' : $scope.end}
+                        );
+                };
+
+            })
+
+            .controller("PieCtrl", function ($scope, $http) {
+                $scope.labels = [];
+                $scope.data = [];
+                $scope.show = false;
+
+                $scope.draw_graph = function(start, end) {
+                    url = '{% url "users:repartition_project" userprofile.id %}';
+                    if (start && end) {
+                        url+="_"+start+"_"+end;
+                    }
+                    $http({
+                        method: 'GET',
+                        url: url
+                    })
+                    .then(function successCallback(response) {
+                        // Empty array if populated
+                        if ($scope.labels.length) {
+                            $scope.labels = [];
+                            $scope.data = [];
+                        }
+                        labels_list = [];
+                        data_list = [];
+                        $scope.show = true;
+                        angular.forEach(JSON.parse(response.data), function(value, key) {
+                            if (!value.project__name || !value.duration_sum) {
+                                $scope.show = false;
+                            }
+                            labels_list.push(value.project__name);
+                            data_list.push(value.duration_sum);
+                        });
+
+                        if($scope.show) {
+                            $scope.labels = labels_list;
+                            $scope.data = data_list;
+                        }
+
+                    }, function errorCallback(response) {
+                        alert(response);
+                    });
+                };
+
+                $scope.$on("updateFilters", function(evt, value) {
+                    if (value.end && value.start) {
+                        if (value.end.match(/^(\d{4}-\d{2}-\d{2})$/) &&
+                            value.start.match(/^(\d{4}-\d{2}-\d{2})$/)) {
+                            $scope.draw_graph(value.start, value.end);
+                        }
+                    }
+                })
+
+                $scope.$on('create', function () {
+                    $scope.loaded = true;
+                });
+
+                $scope.draw_graph();
+
+            })
+        ;
+    })();
+
+    </script>
 {% endblock %}
