@@ -19,9 +19,9 @@ def connection(request):
     """
     Cette view permet aux utilisateurs de se connecter
     """
-    form = FormConnection() 
+    form = FormConnection()
     if request.POST:
-        form = FormConnection(request.POST) 
+        form = FormConnection(request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
@@ -43,7 +43,7 @@ def logout_user(request):
 def detail(request, pk):
     userprofile = get_object_or_404(UserProfile, pk=pk)
     task_list = Task.objects.filter(
-        Q(userprofile=userprofile) | 
+        Q(userprofile=userprofile) |
         Q(user_add=userprofile)
     )
     paginator = Paginator(task_list, 10)
@@ -60,8 +60,8 @@ def detail(request, pk):
     ).order_by('-execution_date')[:10]
     form = TimeRangeForm()
     return render(
-        request, 
-        'users/detail.html', 
+        request,
+        'users/detail.html',
         {
             'userprofile' : userprofile,
             'task_list_page' : task_list_page,
@@ -73,7 +73,9 @@ def detail(request, pk):
 def repartition_project(request, pk, start=None, end=None):
     userprofile = get_object_or_404(UserProfile, pk=pk)
     data_list = Task.objects.filter(
-            userprofile=userprofile
+            userprofile=userprofile,
+            duration__gt=0,
+            execution_date__isnull=False
         )
     if start and end:
         start_date = datetime.datetime.strptime(start, "%Y-%m-%d")

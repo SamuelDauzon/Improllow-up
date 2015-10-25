@@ -14,8 +14,18 @@ class Task(BaseModel):
         null = True,
         blank = True
     )
-    project = models.ForeignKey(Project, verbose_name="Projet")
-    project = models.ForeignKey("TaskType", verbose_name="Type de tâche")
+    project = models.ForeignKey(
+        Project,
+        verbose_name="Projet",
+        null = True,
+        blank = True
+    )
+    task_type = models.ForeignKey(
+        "TaskType",
+        verbose_name="Type de tâche",
+        null = True,
+        blank = True
+    )
     user_add = models.ForeignKey(
         UserProfile,
         verbose_name="Ajoutée par",
