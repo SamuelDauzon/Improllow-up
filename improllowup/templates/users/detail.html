@@ -10,7 +10,8 @@
                     </table>
                 </div>
                 <div class="col-lg-3 col-sm-3">
-                    <button ng-click="test()">Recharger</button>
+                    <button class="btn btn-primary" ng-click="reload()">Recharger</button>
+                    <button class="btn btn-primary" ng-click="export_csv()">Export CSV</button>
                 </div>
             </div>
 
@@ -96,14 +97,26 @@
                 });
             }])
 
-            .controller("Commands", function ($scope, $http) {
-                $scope.test = function () {
+            .controller("Commands", function ($scope, $http, $window) {
+                $scope.reload = function () {
                     $scope.$broadcast(
                         "updateFilters",
                         {'start' : $scope.start, 'end' : $scope.end}
                         );
                 };
 
+                $scope.export_csv = function () {
+                    if ($scope.end && $scope.start) {
+                        if ($scope.end.match(/^(\d{4}-\d{2}-\d{2})$/) &&
+                            $scope.start.match(/^(\d{4}-\d{2}-\d{2})$/)) {
+                            url = '{% url "users:export_csv" userprofile.id %}';
+                            if ($scope.start && $scope.end) {
+                                url+="_"+$scope.start+"_"+$scope.end;
+                            }
+                            $window.open(url);
+                        }
+                    }
+                };
             })
 
             .controller("PieCtrl", function ($scope, $http) {
