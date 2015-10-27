@@ -10,13 +10,13 @@
                     </table>
                 </div>
                 <div class="col-lg-3 col-sm-3">
-                    <button ng-click="test()">Recharger</button>
+                    <button class="btn btn-primary" ng-click="reload()">Recharger</button>
+                    <button class="btn btn-primary" ng-click="export_csv()">Export CSV</button>
                 </div>
             </div>
-            
-            <div class="row">
-                <div class="col-lg-6 col-sm-12" id="pie-chart" ng-controller="PieCtrl">
 
+            <div class="row" ng-controller="PieCtrl">
+                <div class="col-lg-6 col-sm-12" id="pie-chart" ng-if="show">
                   <div class="panel panel-default">
                     <div class="panel-heading">Pie Chart</div>
                     <div class="panel-body">
@@ -97,19 +97,32 @@
                 });
             }])
 
-            .controller("Commands", function ($scope, $http) {
-                $scope.test = function () {
+            .controller("Commands", function ($scope, $http, $window) {
+                $scope.reload = function () {
                     $scope.$broadcast(
-                        "updateFilters", 
+                        "updateFilters",
                         {'start' : $scope.start, 'end' : $scope.end}
                         );
                 };
 
+                $scope.export_csv = function () {
+                    if ($scope.end && $scope.start) {
+                        if ($scope.end.match(/^(\d{4}-\d{2}-\d{2})$/) &&
+                            $scope.start.match(/^(\d{4}-\d{2}-\d{2})$/)) {
+                            url = '{% url "users:export_csv" userprofile.id %}';
+                            if ($scope.start && $scope.end) {
+                                url+="_"+$scope.start+"_"+$scope.end;
+                            }
+                            $window.open(url);
+                        }
+                    }
+                };
             })
 
             .controller("PieCtrl", function ($scope, $http) {
                 $scope.labels = [];
                 $scope.data = [];
+                $scope.show = false;
 
                 $scope.draw_graph = function(start, end) {
                     url = '{% url "users:repartition_project" userprofile.id %}';
@@ -126,10 +139,22 @@
                             $scope.labels = [];
                             $scope.data = [];
                         }
+                        labels_list = [];
+                        data_list = [];
+                        $scope.show = true;
                         angular.forEach(JSON.parse(response.data), function(value, key) {
-                            $scope.labels.push(value.project__name)
-                            $scope.data.push(value.duration_sum)
+                            if (!value.project__name || !value.duration_sum) {
+                                $scope.show = false;
+                            }
+                            labels_list.push(value.project__name);
+                            data_list.push(value.duration_sum);
                         });
+
+                        if($scope.show) {
+                            $scope.labels = labels_list;
+                            $scope.data = data_list;
+                        }
+
                     }, function errorCallback(response) {
                         alert(response);
                     });
@@ -143,6 +168,10 @@
                         }
                     }
                 })
+
+                $scope.$on('create', function () {
+                    $scope.loaded = true;
+                });
 
                 $scope.draw_graph();
 
