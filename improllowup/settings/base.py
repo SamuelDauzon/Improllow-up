@@ -110,3 +110,4 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT,'templates'),
 )
 
+PERIOD_DAYS_GRAPH = 7
