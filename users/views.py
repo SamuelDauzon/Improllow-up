@@ -1,6 +1,7 @@
 # coding:utf-8
 import json
 import datetime
+import csv
 
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
@@ -70,8 +71,7 @@ def detail(request, pk):
         }
     )
 
-def repartition_project(request, pk, start=None, end=None):
-    userprofile = get_object_or_404(UserProfile, pk=pk)
+def repartition_task_base(userprofile, start, end):
     data_list = Task.objects.filter(
             userprofile=userprofile,
             duration__gt=0,
@@ -84,7 +84,52 @@ def repartition_project(request, pk, start=None, end=None):
             execution_date__gte = start,
             execution_date__lte = end
             )
+    return data_list
+
+
+def repartition_project(request, pk, start=None, end=None):
+    userprofile = get_object_or_404(UserProfile, pk=pk)
+    data_list = repartition_task_base(userprofile, start, end)
     data_list = data_list.values('project__name').annotate(duration_sum=Sum('duration')).order_by()
+    data_list = list(data_list)
+    return JsonResponse(json.dumps(data_list), safe=False)
+
+def export_csv(request, pk, start=None, end=None):
+    userprofile = get_object_or_404(UserProfile, pk=pk)
+    start_date = datetime.datetime.strptime(start, "%Y-%m-%d")
+    end_date = datetime.datetime.strptime(end, "%Y-%m-%d")
+    data_list = Task.objects.filter(
+            userprofile=userprofile,
+            duration__gt=0,
+            execution_date__gte = start,
+            execution_date__lte = end
+        ).order_by('execution_date')
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="'+str(userprofile)+'.csv"'
+    writer = csv.writer(response, delimiter=';')
+    field_names = ['Date', 'Projet', 'Tâche', 'Durée', 'Type']
+    writer.writerow(field_names)
+    for obj in data_list:
+        row_list = [
+            str(obj.execution_date),
+            str(obj.project),
+            obj.name,
+            str(obj.duration),
+            str(obj.task_type)
+            ]
+        new_row_list = []
+        for i in row_list:
+            if i == 'None':
+                new_row_list.append('')
+            else:
+                new_row_list.append(i)
+        writer.writerow(new_row_list)
+    return response
+
+def repartition_temps(request, pk, start=None, end=None):
+    userprofile = get_object_or_404(UserProfile, pk=pk)
+    data_list = repartition_task_base(userprofile, start, end)
+    data_list = data_list.values('task_type__name').annotate(duration_sum=Sum('duration')).order_by()
     data_list = list(data_list)
     return JsonResponse(json.dumps(data_list), safe=False)
 

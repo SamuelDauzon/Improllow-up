@@ -19,11 +19,12 @@ class TaskForm(ModelFormBase):
             )
         }
         fields = {
-            'name', 
-            'duration', 
-            'project', 
-            'userprofile', 
+            'name',
+            'duration',
+            'project',
+            'userprofile',
             'execution_date',
             'details',
+            'task_type',
         }
 

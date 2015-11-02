@@ -40,7 +40,7 @@ class Task(BaseModel):
         blank = True
     )
     execution_date = models.DateField(
-    	verbose_name="Date d'éxecution",
+        verbose_name="Date d'éxecution",
         null = True,
         blank = True
     )

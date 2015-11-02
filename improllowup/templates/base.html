@@ -4,12 +4,12 @@
     <title>{% block titre %}{% endblock titre %}</title>
     <meta charset="utf-8" />
     {% load staticfiles %}
-    <script src="{% static 'lib/js/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'lib/js/jquery/dist/jquery.js' %}"></script>
     <link rel="stylesheet" href="{% static "lib/css/bootswatch/yeti/bootstrap.min.css" %}">
     <link rel="stylesheet" href="{% static "lib/css/bootswatch/assets/css/bootswatch.min.css"%}" />
     <script src="{% static "lib/css/bootswatch/bower_components/bootstrap/dist/js/bootstrap.min.js"%}"></script>
     <script src="{% static "lib/css/bootswatch/assets/js/bootswatch.js"%}"></script>
-    <script src="{% static 'lib/js/angularjs/build/angular.min.js' %}"></script>
+    <script src="{% static 'lib/js/angularjs/build/angular.js' %}"></script>
 
     <script src="{% static 'lib/js/Chart.js/Chart.min.js' %}"></script>
 
@@ -48,7 +48,7 @@
                             <li>
                                 <a href="{% url "customers:list" %}">Clients</a>
                             </li>
-                            
+
                         {% endif %}
                         <li class="divider-vertical"></li>
                         {% block menu_include %}{% endblock menu_include %}

@@ -10,16 +10,25 @@
                     </table>
                 </div>
                 <div class="col-lg-3 col-sm-3">
-                    <button ng-click="test()">Recharger</button>
+                    <button class="btn btn-primary" ng-click="reload()">Recharger</button>
+                    <button class="btn btn-primary" ng-click="export_csv()">Export CSV</button>
                 </div>
             </div>
 
-            <div class="row" ng-controller="PieCtrl">
-                <div class="col-lg-6 col-sm-12" id="pie-chart" ng-if="show">
-                  <div class="panel panel-default">
-                    <div class="panel-heading">Pie Chart</div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-6" ng-controller="temps_projet">
+                  <div class="panel panel-default" ng-if="show">
+                    <div class="panel-heading">Temps passé sur les projets</div>
                     <div class="panel-body">
-                      <canvas id="pie" class="chart chart-pie chart-xs" chart-data="data" chart-labels="labels"></canvas>
+                      <canvas class="chart chart-pie chart-xs" chart-data="data" chart-labels="labels"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-sm-6" ng-controller="temps_type">
+                  <div class="panel panel-default" ng-if="show">
+                    <div class="panel-heading">Temps passé sur les types de tâche</div>
+                    <div class="panel-body">
+                      <canvas class="chart chart-pie chart-xs" chart-data="data" chart-labels="labels"></canvas>
                     </div>
                   </div>
                 </div>
@@ -96,17 +105,29 @@
                 });
             }])
 
-            .controller("Commands", function ($scope, $http) {
-                $scope.test = function () {
+            .controller("Commands", function ($scope, $http, $window) {
+                $scope.reload = function () {
                     $scope.$broadcast(
                         "updateFilters",
                         {'start' : $scope.start, 'end' : $scope.end}
                         );
                 };
 
+                $scope.export_csv = function () {
+                    if ($scope.end && $scope.start) {
+                        if ($scope.end.match(/^(\d{4}-\d{2}-\d{2})$/) &&
+                            $scope.start.match(/^(\d{4}-\d{2}-\d{2})$/)) {
+                            url = '{% url "users:export_csv" userprofile.id %}';
+                            if ($scope.start && $scope.end) {
+                                url+="_"+$scope.start+"_"+$scope.end;
+                            }
+                            $window.open(url);
+                        }
+                    }
+                };
             })
 
-            .controller("PieCtrl", function ($scope, $http) {
+            .controller("temps_projet", function ($scope, $http) {
                 $scope.labels = [];
                 $scope.data = [];
                 $scope.show = false;
@@ -160,7 +181,65 @@
                     $scope.loaded = true;
                 });
 
-                $scope.draw_graph();
+                $scope.draw_graph($scope.start, $scope.end);
+
+            })
+
+            .controller("temps_type", function ($scope, $http) {
+                $scope.labels = [];
+                $scope.data = [];
+                $scope.show = false;
+
+                $scope.draw_graph = function(start, end) {
+                    url = '{% url "users:repartition_temps" userprofile.id %}';
+                    if (start && end) {
+                        url+="_"+start+"_"+end;
+                    }
+                    $http({
+                        method: 'GET',
+                        url: url
+                    })
+                    .then(function successCallback(response) {
+                        // Empty array if populated
+                        if ($scope.labels.length) {
+                            $scope.labels = [];
+                            $scope.data = [];
+                        }
+                        labels_list = [];
+                        data_list = [];
+                        $scope.show = true;
+                        angular.forEach(JSON.parse(response.data), function(value, key) {
+                            if (!value.task_type__name || !value.duration_sum) {
+                                $scope.show = false;
+                            }
+                            labels_list.push(value.task_type__name);
+                            data_list.push(value.duration_sum);
+                        });
+
+                        if($scope.show) {
+                            $scope.labels = labels_list;
+                            $scope.data = data_list;
+                        }
+
+                    }, function errorCallback(response) {
+                        alert(response);
+                    });
+                };
+
+                $scope.$on("updateFilters", function(evt, value) {
+                    if (value.end && value.start) {
+                        if (value.end.match(/^(\d{4}-\d{2}-\d{2})$/) &&
+                            value.start.match(/^(\d{4}-\d{2}-\d{2})$/)) {
+                            $scope.draw_graph(value.start, value.end);
+                        }
+                    }
+                })
+
+                $scope.$on('create', function () {
+                    $scope.loaded = true;
+                });
+
+                $scope.draw_graph($scope.start, $scope.end);
 
             })
         ;

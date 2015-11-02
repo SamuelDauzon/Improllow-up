@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from django import forms
 from bootstrap3_datetime.widgets import DateTimePicker
 
+from django.conf import settings
 from projects.forms import FormBase, ModelFormBase
 from .models import UserProfile
 
@@ -52,24 +53,25 @@ class TimeRangeForm(FormBase):
     Formulaire de choix d'une période
     """
     start = forms.DateField(
-        initial = datetime.date.today, 
-        label = "Début", 
+        initial = datetime.date.today,
+        label = "Début",
         )
-    end_date = datetime.datetime.now() - datetime.timedelta(days=7)
+    end_date = datetime.datetime.now() - datetime.timedelta(days=settings.PERIOD_DAYS_GRAPH)
     end = forms.DateField(
-        initial = end_date, 
+        initial = end_date,
         label = "Fin",
         )
     def __init__(self, *args, **kwargs):
         super(TimeRangeForm, self).__init__(*args, **kwargs)
-        end_date = datetime.datetime.now() - datetime.timedelta(days=7)
-        start_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        start_date = datetime.datetime.now() - datetime.timedelta(days=settings.PERIOD_DAYS_GRAPH)
+        end_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        start_date = start_date.strftime('%Y-%m-%d')
 
         self.fields['start'].widget.attrs.update(
-            {'ng-model' : 'start', 'placeholder' : 'AAAA-MM-DD'}
+            {'ng-model' : 'start', 'placeholder' : 'AAAA-MM-DD', 'ng-init' : "start='"+str(start_date)+"'"}
             )
         self.fields['end'].widget.attrs.update(
-            {'ng-model' : 'end', 'placeholder' : 'AAAA-MM-DD'}
+            {'ng-model' : 'end', 'placeholder' : 'AAAA-MM-DD', 'ng-init' : "end='"+str(end_date)+"'"}
             )
 
 
