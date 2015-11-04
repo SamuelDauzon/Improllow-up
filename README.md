@@ -1,5 +1,7 @@
 # Improllow-up
 
+Ce projet sert d'exemple au [livre Git - maitriser la gestion de vos versions](http://www.editions-eni.fr/livres/git-maitrisez-la-gestion-de-vos-versions-concepts-utilisation-et-cas-pratiques/.d1ea8f871b0b4c12b2f863e5020d8a14.html)
+
 ## Présentation
 Ce logiciel permet de **suivre les tâches des membres d'une équipe**. Ses tâches sont groupées par projets eux-mêmes groupés par client.
 Ce projet permet de **savoir facilement les projets sur lesquels a travaillé un collaborateur** sur une période donnée. Un export CSV des tâches est également présent.
